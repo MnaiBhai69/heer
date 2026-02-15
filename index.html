@@ -1,473 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Happy Birthday, Heer! 🎉</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surprise for Heer 🎉</title>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Tailwind CSS (CDN) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50:  '#fff1f2',
-              100: '#ffe4e6',
-              200: '#fecdd3',
-              300: '#fda4af',
-              400: '#fb7185',
-              500: '#f43f5e',
-              600: '#e11d48',
-              700: '#be123c',
-              800: '#9f1239',
-              900: '#881337'
-            }
-          },
-          fontFamily: {
-            script: ['Pacifico', 'cursive'],
-            display: ['Poppins', 'ui-sans-serif', 'system-ui', 'sans-serif']
-          },
-          dropShadow: {
-            glow: '0 0 22px rgba(255,255,255,0.65)'
-          },
-          keyframes: {
-            floatUp: {
-              '0%':   { transform: 'translateY(100vh) translateX(0)' },
-              '100%': { transform: 'translateY(-120vh) translateX(0)' }
-            },
-            twinkle: {
-              '0%,100%': { opacity: 0.1, transform: 'scale(1)' },
-              '50%':     { opacity: 0.8, transform: 'scale(1.25)' }
-            },
-            type: {
-              '0%':   { width: '0ch' },
-              '100%': { width: '36ch' }
-            },
-            caret: {
-              '50%': { opacity: 0 }
-            },
-            fadeInUp: {
-              '0%':   { opacity: 0, transform: 'translateY(16px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' }
-            },
-            confettiFall: {
-              '0%':   { transform: 'translateY(-10vh) rotate(0deg)', opacity: 1 },
-              '100%': { transform: 'translateY(110vh) rotate(720deg)', opacity: 1 }
-            }
-          },
-          animation: {
-            floatUp: 'floatUp var(--dur,12s) linear infinite',
-            twinkle: 'twinkle 3s ease-in-out infinite',
-            type: 'type 4s steps(36) 0.4s 1 both, caret 1s steps(1) infinite',
-            fadeInUp: 'fadeInUp 800ms ease 1 both',
-            confettiFall: 'confettiFall var(--cDur, 4s) linear forwards'
-          }
-        }
-      }
-    };
-  </script>
-
-  <style>
-    /* Animated gradient background */
-    body {
-      background: radial-gradient(1200px 800px at 10% 10%, rgba(255, 230, 240, 0.65), transparent 40%),
-                  radial-gradient(1200px 800px at 90% 20%, rgba(220, 240, 255, 0.65), transparent 40%),
-                  linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
+<style>
+    /* Floating balloon */
+    @keyframes floatUp {
+        0% { transform: translateY(120vh) scale(0.8); opacity: 0; }
+        20% { opacity: 1; }
+        100% { transform: translateY(-20vh) scale(1); opacity: 1; }
     }
-
-    .typewriter {
-      white-space: nowrap;
-      overflow: hidden;
-      border-right: 3px solid rgba(255,255,255,0.85);
-    }
-
-    /* Balloons */
     .balloon {
-      width: 42px; height: 54px;
-      border-radius: 50% 50% 45% 45%;
-      position: absolute;
-      bottom: -80px;
-      opacity: 0.9;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
-    }
-    .balloon::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: -26px;
-      width: 2px; height: 28px;
-      background: rgba(255,255,255,0.8);
+        position: absolute;
+        width: 40px;
+        height: 55px;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: floatUp linear infinite;
     }
 
-    /* Lightbox */
-    .lightbox {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.8);
-      display: none;
-      align-items: center; justify-content: center;
-      z-index: 60;
-      padding: 1rem;
-    }
-    .lightbox.open { display: flex; }
-
-    /* Carousel */
-    .track {
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .slide {
-      scroll-snap-align: center;
-      flex: 0 0 100%;
-      position: relative;
-      aspect-ratio: 3/2;
+    /* Moving NO button */
+    .move-no {
+        position: relative;
+        transition: 0.2s ease;
     }
 
-    /* Hearts */
+    /* Surprise popup */
+    #surpriseBox {
+        display: none;
+    }
+
+    /* Simple hearts burst */
     .heart {
-      position: absolute;
-      width: 26px; height: 26px;
-      opacity: 0.9;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
-      transform-origin: center;
-      will-change: transform, opacity;
+        position: fixed;
+        font-size: 24px;
+        animation: heartUp 1.2s linear forwards;
     }
-    @keyframes heartFloatUp {
-      0% {
-        transform: translate(var(--x, 0), 100vh) scale(var(--s, 1)) rotate(0deg);
-        opacity: 0;
-      }
-      10% { opacity: 1; }
-      50% {
-        transform: translate(calc(var(--x, 0) + var(--sw, 0px)), 50vh) scale(var(--s, 1)) rotate(10deg);
-      }
-      100% {
-        transform: translate(calc(var(--x, 0) - var(--sw, 0px)), -10vh) scale(var(--s, 1)) rotate(-10deg);
-        opacity: 0;
-      }
+    @keyframes heartUp {
+        0% { transform: translateY(0) scale(1); opacity: 1; }
+        100% { transform: translateY(-120px) scale(1.6); opacity: 0; }
     }
-    @keyframes heartPulse {
-      0%,100% { transform: scale(1); }
-      50%     { transform: scale(1.15); }
-    }
-
-    /* Hide scrollbar helper */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  </style>
+</style>
 </head>
 
-<body class="text-white font-display selection:bg-brand-400 selection:text-white">
-  <!-- Sparkles -->
-  <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10">
-    <svg class="absolute animate-twinkle" style="top:12%; left:8%" width="8" height="8"><circle cx="4" cy="4" r="3" fill="#fff" opacity="0.7"/></svg>
-    <svg class="absolute animate-twinkle" style="top:28%; right:14%" width="6" height="6"><circle cx="3" cy="3" r="2" fill="#fff" opacity="0.6"/></svg>
-    <svg class="absolute animate-twinkle" style="bottom:20%; left:18%" width="10" height="10"><circle cx="5" cy="5" r="4" fill="#fff" opacity="0.7"/></svg>
-    <svg class="absolute animate-twinkle" style="bottom:30%; right:10%" width="7" height="7"><circle cx="3.5" cy="3.5" r="3" fill="#fff" opacity="0.65"/></svg>
-  </div>
+<body class="bg-gradient-to-br from-pink-200 to-purple-300 min-h-screen flex items-center justify-center">
 
-  <!-- Floating Balloons -->
-  <div id="balloonField" aria-hidden="true" class="pointer-events-none fixed inset-0 -z-0"></div>
+<!-- Balloons -->
+<div id="balloons"></div>
 
-  <!-- Floating Hearts -->
-  <div id="heartsField" aria-hidden="true" class="pointer-events-none fixed inset-0 -z-0"></div>
+<!-- Main box -->
+<div id="mainBox" class="text-center bg-white/40 backdrop-blur-lg shadow-xl p-6 sm:p-8 rounded-2xl w-[90%] max-w-md">
+    <div class="text-sm font-semibold text-pink-600 mb-2">📅 22 February</div>
+    <h1 class="text-2xl sm:text-3xl font-bold text-pink-700 mb-3">🎉 Surprise Heer! 🎉</h1>
+    <p class="text-base sm:text-lg text-purple-800 font-semibold">I want to ask you something...</p>
 
-  <!-- Hero -->
-  <header class="relative pt-16 pb-10 sm:pt-24 sm:pb-16">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <p class="uppercase tracking-[0.35em] text-xs sm:text-sm text-white/70 animate-fadeInUp">
-        𝑺𝒑𝒓𝒆𝒂𝒅 𝒋𝒐𝒚 • 𝑪𝒆𝒍𝒆𝒃𝒓𝒂𝒕𝒆 𝑯𝒆𝒆𝒓
-      </p>
+    <button id="startBtn" class="mt-6 px-6 py-3 bg-pink-600 text-white rounded-xl shadow-lg hover:bg-pink-700 active:scale-95 transition">
+        Click for Surprise 🌟
+    </button>
+</div>
 
-      <h1 class="mt-4 font-script text-4xl sm:text-6xl md:text-7xl drop-shadow-glow">
-        <span class="bg-clip-text text-transparent bg-gradient-to-r from-pink-300 via-fuchsia-300 to-sky-300">
-          Happy Birthday, Heer!
-        </span>
-      </h1>
+<!-- Question Box -->
+<div id="questionBox" class="hidden text-center bg-white/40 backdrop-blur-lg shadow-xl p-6 sm:p-8 rounded-2xl w-[90%] max-w-md">
+    <div class="text-sm font-semibold text-pink-600 mb-2">📅 22 February</div>
+    <h2 class="text-xl sm:text-2xl font-bold text-purple-800">Can I treat you with cake? 🎂💗</h2>
 
-      <div class="mt-4 sm:mt-6 flex justify-center">
-        <div class="typewriter text-lg sm:text-2xl text-white/90 animate-type">
-          Wishing you laughter, love, and magical moments—today and always ✨
-        </div>
-      </div>
-
-      <div class="mt-8 flex items-center justify-center gap-3 sm:gap-4">
-        <button id="celebrateBtn"
-          class="px-5 sm:px-6 py-3 rounded-xl bg-gradient-to-r from-rose-500 to-fuchsia-500 hover:opacity-95 active:scale-[0.98] transition shadow-lg shadow-rose-500/30">
-          Celebrate 🎉
+    <div class="mt-6 flex items-center justify-center gap-4 sm:gap-6 flex-wrap">
+        <button id="yesBtn" class="px-6 py-3 bg-green-600 text-white rounded-xl shadow hover:bg-green-700 active:scale-95 transition text-base sm:text-lg">
+            Yes 😍
         </button>
 
-        <button id="musicBtn"
-          class="px-5 sm:px-6 py-3 rounded-xl border border-white/20 bg-white/5 backdrop-blur hover:bg-white/10 transition">
-          Play Music 🎵
+        <button id="noBtn" class="px-6 py-3 bg-red-500 text-white rounded-xl shadow move-no text-base sm:text-lg">
+            No 😒
         </button>
-      </div>
-
-      <audio id="bgm" loop preload="none">
-        <!-- Drop your file at ./assets/birthday.mp3 -->
-        <source src="assets/birthday.mp3" type="audio/mpeg">
-      </audio>
     </div>
-  </header>
+</div>
 
-  <!-- Flip Cards -->
-  <section class="relative py-8 sm:py-12">
-    <div class="max-w-6xl mx-auto px-6">
-      <h2 class="text-center text-2xl sm:text-3xl font-semibold text-white/90">Birthday Wishes for Heer 💖</h2>
+<!-- Final Surprise -->
+<div id="surpriseBox" class="text-center bg-white/40 backdrop-blur-lg shadow-xl p-6 sm:p-8 rounded-2xl w-[90%] max-w-md">
+    <h2 class="text-2xl sm:text-3xl font-bold text-pink-700">YAYYY!! 🎂💖</h2>
+    <p class="text-base sm:text-lg text-purple-800 mt-3">I knew you'd say YES 😌💗</p>
 
-      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="[perspective:1000px]">
-          <div class="group relative h-48 sm:h-56 w-full rounded-2xl bg-white/10 border border-white/20 backdrop-blur overflow-hidden [transform-style:preserve-3d] transition-transform duration-700 [transform:rotateY(0)] group-hover:[transform:rotateY(180deg)]">
-            <div class="absolute inset-0 flex items-center justify-center p-6">
-              <div class="text-center">
-                <div class="text-4xl">🎂</div>
-                <p class="mt-3 text-white/85">May your day be as sweet as your favorite cake!</p>
-              </div>
-            </div>
-            <div class="absolute inset-0 flex items-center justify-center p-6 bg-gradient-to-br from-rose-500/30 to-fuchsia-500/30 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-              <p class="text-center">Here’s to another year of smiles, adventures, and dreams coming true. 🥳</p>
-            </div>
-          </div>
-        </div>
+    <div class="text-5xl sm:text-6xl mt-4 animate-bounce">🎂💝</div>
 
-        <div class="[perspective:1000px]">
-          <div class="group relative h-48 sm:h-56 w-full rounded-2xl bg-white/10 border border-white/20 backdrop-blur overflow-hidden [transform-style:preserve-3d] transition-transform duration-700 group-hover:[transform:rotateY(180deg)]">
-            <div class="absolute inset-0 flex items-center justify-center p-6">
-              <div class="text-center">
-                <div class="text-4xl">🌸</div>
-                <p class="mt-3 text-white/85">Heer, you bloom brighter every year. Keep shining!</p>
-              </div>
-            </div>
-            <div class="absolute inset-0 flex items-center justify-center p-6 bg-gradient-to-br from-sky-500/30 to-purple-500/30 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-              <p class="text-center">Wishing you peace, joy, and wonderful surprises ahead.</p>
-            </div>
-          </div>
-        </div>
+    <p class="text-lg sm:text-xl text-pink-700 mt-4 font-semibold">Let's celebrate your special day, Heer! ✨</p>
+</div>
 
-        <div class="[perspective:1000px]">
-          <div class="group relative h-48 sm:h-56 w-full rounded-2xl bg-white/10 border border-white/20 backdrop-blur overflow-hidden [transform-style:preserve-3d] transition-transform duration-700 group-hover:[transform:rotateY(180deg)]">
-            <div class="absolute inset-0 flex items-center justify-center p-6">
-              <div class="text-center">
-                <div class="text-4xl">✨</div>
-                <p class="mt-3 text-white/85">Your kindness makes the world brighter.</p>
-              </div>
-            </div>
-            <div class="absolute inset-0 flex items-center justify-center p-6 bg-gradient-to-br from-amber-500/30 to-rose-500/30 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-              <p class="text-center">Keep sparkling, birthday star! 🌟</p>
-            </div>
-          </div>
-        </div>
+<script>
+/* Floating balloons */
+function spawnBalloons() {
+    const colors = ["#f43f5e", "#fb7185", "#f472b6", "#60a5fa", "#34d399"];
+    const container = document.getElementById("balloons");
 
-      </div>
-    </div>
-  </section>
-
-  <!-- Photo Carousel -->
-  <section class="relative py-10 sm:py-14">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl sm:text-2xl font-semibold text-white/90">Memories with Heer 📸</h2>
-        <div class="flex gap-2">
-          <button id="prevBtn" class="px-3 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10">⟵ Prev</button>
-          <button id="nextBtn" class="px-3 py-2 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10">Next ⟶</button>
-        </div>
-      </div>
-
-      <div class="mt-5 overflow-hidden rounded-2xl border border-white/15 bg-white/5 backdrop-blur">
-        <div id="carousel" class="track flex overflow-x-auto no-scrollbar">
-          <div class="slide flex items-center justify-center bg-black/20">
-            <img class="h-full w-full object-cover" src="https://picsum.photos/seed/heer1/1200/800" alt="Memory 1" />
-          </div>
-          <div class="slide flex items-center justify-center bg-black/20">
-            <img class="h-full w-full object-cover" src="https://picsum.photos/seed/heer2/1200/800" alt="Memory 2" />
-          </div>
-          <div class="slide flex items-center justify-center bg-black/20">
-            <img class="h-full w-full object-cover" src="https://picsum.photos/seed/heer3/1200/800" alt="Memory 3" />
-          </div>
-          <div class="slide flex items-center justify-center bg-black/20">
-            <img class="h-full w-full object-cover" src="https://picsum.photos/seed/heer4/1200/800" alt="Memory 4" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Lightbox -->
-  <div id="lightbox" class="lightbox">
-    <img id="lightboxImg" src="" alt="Preview" class="max-h-[88vh] max-w-[92vw] rounded-xl shadow-2xl" />
-  </div>
-
-  <!-- Footer -->
-  <footer class="relative py-8">
-    <div class="max-w-6xl mx-auto px-6 text-center">
-      <p class="text-white/70">Made with 💗 for <span class="font-semibold text-white">Heer</span>. Wishing you the happiest year ahead!</p>
-    </div>
-  </footer>
-
-  <!-- Confetti container -->
-  <div id="confettiLayer" class="pointer-events-none fixed inset-0 z-50"></div>
-
-  <!-- Scripts -->
-  <script>
-    /* ========== Balloons ========== */
-    (function balloons(){
-      const field = document.getElementById('balloonField');
-      const colors = ['#fb7185','#f472b6','#60a5fa','#34d399','#f59e0b','#a78bfa','#f43f5e'];
-      const count = 22;
-
-      for (let i = 0; i < count; i++) {
-        const b = document.createElement('div');
-        b.className = 'balloon';
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const left = Math.random() * 100;
-        const scale = 0.75 + Math.random() * 0.8;
-        const delay = Math.random() * 8; // seconds
-        const duration = 10 + Math.random() * 12;
-        b.style.left = left + 'vw';
-        b.style.background = color;
-        b.style.transform = `scale(${scale})`;
-        b.style.setProperty('--dur', duration + 's');
-        b.style.animation = `floatUp var(--dur) linear ${delay}s infinite`;
-        field.appendChild(b);
-      }
-    })();
-
-    /* ========== Floating Hearts ========== */
-    (function hearts(){
-      const field = document.getElementById('heartsField');
-      const colors = ['#fb7185','#f472b6','#ef4444','#f43f5e','#e879f9','#fda4af'];
-      const count = 26;
-
-      const heartSVG = (fill = '#fb7185') =>
-        `<svg viewBox="0 0 24 24" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path fill="${fill}" d="M12.001 20.727c-.33 0-.66-.11-.928-.331-1.652-1.357-3.17-2.605-4.55-3.74-3.63-2.966-6.053-4.946-6.023-8.31.03-3.22 2.426-5.34 5.23-5.34 1.84 0 3.35.87 4.27 2.23.92-1.36 2.43-2.23 4.27-2.23 2.8 0 5.2 2.12 5.23 5.34.03 3.364-2.392 5.344-6.022 8.31-1.38 1.135-2.898 2.383-4.55 3.74-.27.22-.6.33-.928.33z"/>
-        </svg>`;
-
-      function spawnOneHeart() {
-        const h = document.createElement('div');
-        h.className = 'heart';
-        const color = colors[Math.floor(Math.random()*colors.length)];
-
-        const leftVW = Math.random() * 100;
-        const scale  = 0.7 + Math.random() * 0.9;
-        const sway   = (Math.random()*60 - 30);
-        const delay  = Math.random() * 4;
-        const dur    = 8 + Math.random() * 8;
-
-        h.style.left = leftVW + 'vw';
-        h.style.setProperty('--x', '0px');
-        h.style.setProperty('--s', scale);
-        h.style.setProperty('--sw', sway + 'px');
-        h.innerHTML = heartSVG(color);
-
-        h.style.animation = `heartFloatUp ${dur}s linear ${delay}s forwards`;
-        const svg = h.querySelector('svg');
-        svg.style.animation = 'heartPulse 1.8s ease-in-out infinite';
-
-        field.appendChild(h);
-        setTimeout(() => h.remove(), (delay + dur) * 1000 + 100);
-      }
-
-      for (let i = 0; i < count; i++) {
-        setTimeout(spawnOneHeart, Math.random() * 1500);
-      }
-      setInterval(spawnOneHeart, 700);
-    })();
-
-    /* ========== Confetti ========== */
-    function confettiBurst(amount = 180) {
-      const layer = document.getElementById('confettiLayer');
-      const colors = ['#fde68a','#fca5a5','#a7f3d0','#93c5fd','#d8b4fe','#f9a8d4','#bef264'];
-      const rect = layer.getBoundingClientRect();
-
-      for (let i = 0; i < amount; i++) {
-        const c = document.createElement('div');
-        const size = 6 + Math.random()*6;
-        c.style.position = 'fixed';
-        c.style.top = '-10vh';
-        c.style.left = (Math.random() * rect.width) + 'px';
-        c.style.width = size + 'px';
-        c.style.height = (size * (0.6 + Math.random()*0.9)) + 'px';
-        c.style.background = colors[Math.floor(Math.random()*colors.length)];
-        c.style.transform = `rotate(${Math.random()*360}deg)`;
-        c.style.opacity = 0.95;
-        c.style.borderRadius = Math.random() > 0.7 ? '50%' : '2px';
-        c.style.zIndex = 60;
-        c.style.pointerEvents = 'none';
-        const d = 3 + Math.random()*3;
-        c.style.setProperty('--cDur', d + 's');
-        c.style.animation = 'confettiFall var(--cDur) linear forwards';
-        layer.appendChild(c);
-        setTimeout(() => c.remove(), d * 1000 + 100);
-      }
+    for (let i = 0; i < 18; i++) {
+        const b = document.createElement("div");
+        b.classList.add("balloon");
+        b.style.left = Math.random() * 100 + "vw";
+        b.style.background = colors[Math.floor(Math.random()*colors.length)];
+        b.style.animationDuration = 10 + Math.random()*10 + "s";
+        container.appendChild(b);
     }
+}
+spawnBalloons();
 
-    document.getElementById('celebrateBtn').addEventListener('click', () => {
-      confettiBurst(220);
-      if (window.navigator.vibrate) navigator.vibrate([30, 20, 30]);
-    });
+/* Start button */
+document.getElementById("startBtn").onclick = () => {
+    document.getElementById("mainBox").classList.add("hidden");
+    document.getElementById("questionBox").classList.remove("hidden");
+}
 
-    /* ========== Music Toggle ========== */
-    const musicBtn = document.getElementById('musicBtn');
-    const bgm = document.getElementById('bgm');
-    let playing = false;
+/* Moving NO button */
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseover", () => {
+    let x = Math.random() * 200 - 100;
+    let y = Math.random() * 200 - 100;
 
-    musicBtn.addEventListener('click', async () => {
-      try {
-        if (!playing) {
-          await bgm.play();
-          playing = true;
-          musicBtn.textContent = 'Pause Music ⏸️';
-        } else {
-          bgm.pause();
-          playing = false;
-          musicBtn.textContent = 'Play Music 🎵';
-        }
-      } catch (e) {
-        alert('Add a file at ./assets/birthday.mp3 to enable music 🎵');
-      }
-    });
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+});
 
-    /* ========== Carousel + Lightbox ========== */
-    const track = document.getElementById('carousel');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+/* YES button */
+document.getElementById("yesBtn").onclick = () => {
+    heartBurst();
+    // Navigate to heer.html after a short delay
+    setTimeout(() => {
+        window.location.href = "heer.html";
+    }, 1200);
+};
 
-    function go(delta) {
-      const width = track.clientWidth;
-      track.scrollBy({ left: delta * width, behavior: 'smooth' });
+/* Hearts burst animation */
+function heartBurst() {
+    for (let i = 0; i < 25; i++) {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.innerHTML = "💖";
+        h.style.left = (window.innerWidth/2) + (Math.random()*80-40) + "px";
+        h.style.top = (window.innerHeight/2) + (Math.random()*80-40) + "px";
+        document.body.appendChild(h);
+
+        setTimeout(()=>h.remove(), 1200);
     }
-    prevBtn.addEventListener('click', () => go(-1));
-    nextBtn.addEventListener('click', () => go(1));
+}
+</script>
 
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    track.querySelectorAll('img').forEach(img => {
-      img.addEventListener('click', () => {
-        lightboxImg.src = img.src;
-        lightbox.classList.add('open');
-      });
-    });
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox || e.target === lightboxImg) {
-        lightbox.classList.remove('open');
-        lightboxImg.src = '';
-      }
-    });
-
-    /* Auto confetti on load */
-    window.addEventListener('load', () => {
-      setTimeout(() => confettiBurst(150), 600);
-    });
-  </script>
 </body>
 </html>
